@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.amirnlz.tasko.home.ui.HomeScreen
-import com.amirnlz.tasko.ui.theme.TaskoTheme
+import com.amirnlz.tasko.core.ui.theme.TaskoTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
