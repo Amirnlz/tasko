@@ -1,5 +1,6 @@
 package com.amirnlz.tasko.home.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amirnlz.tasko.core.ui.components.calendar.CalendarDatePicker
 import com.amirnlz.tasko.core.ui.components.calendar.CalendarDates
+import com.amirnlz.tasko.core.ui.components.calendar.CalendarEvent
+import com.amirnlz.tasko.core.ui.components.calendar.CalendarMonthYearPicker
 import com.amirnlz.tasko.core.ui.components.calendar.CalendarState
 import com.amirnlz.tasko.core.ui.theme.TaskoTheme
 import com.amirnlz.tasko.home.ui.component.GreetingMessage
@@ -32,6 +35,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         topBar = { GreetingMessage() }
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
+            CalendarMonthYearPicker(state = calendarState) {
+                Log.d(
+                    "MONTH-YEAR-PICKER",
+                    "HomeScreen: ${if (it is CalendarEvent.MonthChanged) it.yearMonth else "OTHER-THING"}"
+                )
+            }
             CalendarDatePicker(
                 state = calendarState,
                 modifier = Modifier
