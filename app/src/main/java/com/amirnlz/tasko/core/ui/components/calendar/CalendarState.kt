@@ -6,10 +6,9 @@ import java.time.YearMonth
 
 @Immutable
 data class CalendarState(
-    val days: List<CalendarDay>,
     val selectedDate: LocalDate? = null,
     val currentDate: LocalDate = LocalDate.now(),
-    val displayedMonth: YearMonth = YearMonth.now()
+    val displayedYearMonth: YearMonth = YearMonth.now()
 )
 
 sealed interface CalendarEvent {

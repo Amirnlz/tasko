@@ -10,6 +10,6 @@ object CalendarConstants {
 
     fun getYearsRange(): List<Int> {
         val currentYear = LocalDate.now().year
-        return (currentYear - 100..currentYear + 10).toList()
+        return (currentYear - 5..currentYear + 10).toList()
     }
 }

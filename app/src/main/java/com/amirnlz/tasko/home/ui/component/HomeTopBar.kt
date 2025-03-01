@@ -1,13 +1,23 @@
 package com.amirnlz.tasko.home.ui.component
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.amirnlz.tasko.core.ui.theme.TaskoTheme
 import com.amirnlz.tasko.utils.greetingMessageByHour
 import java.util.Calendar
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeTopBar(modifier: Modifier = Modifier) {
+    TopAppBar(
+        modifier = modifier,
+        title = { GreetingMessage() },
+
+    )
+}
 
 @Composable
 fun GreetingMessage(modifier: Modifier = Modifier) {
@@ -25,14 +35,3 @@ private fun greetMessageText(): String {
     return currentHour.greetingMessageByHour()
 
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun GreetingMessagePrev() {
-    TaskoTheme {
-        GreetingMessage()
-    }
-}
-
-
-
