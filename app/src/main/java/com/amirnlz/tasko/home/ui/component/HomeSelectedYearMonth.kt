@@ -19,12 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.amirnlz.tasko.core.ui.components.calendar.CalendarConstants
-import com.amirnlz.tasko.core.ui.components.calendar.CalendarState
 import com.amirnlz.tasko.core.ui.components.calendar.MonthYearPicker
+import java.time.YearMonth
 
 @Composable
-fun CalendarHeader(
-    state: CalendarState,
+fun HomeSelectedYearMonth(
+    selectedYearMonth: YearMonth,
     onHeaderClick: (year: Int, month: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,8 +38,8 @@ fun CalendarHeader(
     ) {
 
         Text(
-            text = CalendarConstants.months[state.displayedYearMonth.monthValue - 1] +
-                    " ${state.displayedYearMonth.year}",
+            text = CalendarConstants.months[selectedYearMonth.monthValue - 1] +
+                    " ${selectedYearMonth.year}",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
@@ -52,9 +52,11 @@ fun CalendarHeader(
     }
 
     if (showMonthYearPicker) {
-        MonthYearPicker(selectedYear = state.displayedYearMonth.year,
-            selectedMonth = state.displayedYearMonth.monthValue,
+        MonthYearPicker(
+            selectedYear = selectedYearMonth.year,
+            selectedMonth = selectedYearMonth.monthValue,
             onConfirm = onHeaderClick,
-            onDismiss = { showMonthYearPicker = false })
+            onDismiss = { showMonthYearPicker = false }
+        )
     }
 }

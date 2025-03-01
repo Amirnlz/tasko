@@ -34,11 +34,17 @@ fun MonthYearPicker(
     onConfirm: (year: Int, month: Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var selectedYearState by remember { mutableIntStateOf(selectedYear) }
-    var selectedMonthState by remember { mutableIntStateOf(selectedMonth) }
-
-    val years = remember { CalendarConstants.getYearsRange() }
+    val years = remember(selectedYear) { CalendarConstants.getYearsRange(selectedYear) }
     val months = remember { CalendarConstants.months }
+
+    var selectedYearState by remember {
+        mutableIntStateOf(selectedYear.coerceIn(years.first(), years.last()))
+    }
+    var selectedMonthState by remember {
+        mutableIntStateOf(selectedMonth.coerceIn(1, 12))
+    }
+
+
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -76,6 +82,7 @@ fun MonthYearPicker(
                         initialIndex = years.indexOf(selectedYearState).coerceAtLeast(0),
                         visibleCount = 5,
                         itemHeight = 40,
+                        animateInitialScroll = false,
                         onSelected = { index, _ ->
                             selectedYearState = years[index]
                         },
@@ -85,9 +92,10 @@ fun MonthYearPicker(
                     WheelPicker(
                         modifier = Modifier.weight(1f),
                         items = months,
-                        initialIndex = (selectedMonthState - 1).coerceIn(0, months.lastIndex),
+                        initialIndex = (selectedMonthState - 1).coerceIn(months.indices),
                         visibleCount = 5,
                         itemHeight = 40,
+                        animateInitialScroll = false,
                         onSelected = { index, _ ->
                             selectedMonthState = index + 1
                         },

@@ -19,8 +19,8 @@ fun HomeCalendar(modifier: Modifier = Modifier, viewModel: CalendarViewModel = v
     Column(
         modifier,
     ) {
-        CalendarHeader(
-            state = state,
+        HomeSelectedYearMonth(
+            selectedYearMonth = state.displayedYearMonth,
             onHeaderClick = { year, month ->
                 val newYearMonth = YearMonth.of(year, month)
                 viewModel.onEvent(CalendarEvent.YearMonthChanged(newYearMonth))
