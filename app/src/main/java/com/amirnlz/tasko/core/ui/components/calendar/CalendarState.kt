@@ -6,7 +6,17 @@ import java.time.YearMonth
 
 @Immutable
 data class CalendarState(
-    val selectedDate: LocalDate? = null,
-    val currentDate: LocalDate = LocalDate.now(),
-    val displayedYearMonth: YearMonth = YearMonth.now()
+    val days: List<CalendarDay> = emptyList(),
+    val selectedDate: LocalDate = LocalDate.now(),
+    val selectedYearMonth: YearMonth = YearMonth.now()
+)
+
+
+@Immutable
+data class CalendarDay(
+    val date: LocalDate,
+    val isToday: Boolean,
+    val isPast: Boolean,
+    val dayOfMonth: Int,
+    val dayOfWeek: String
 )
