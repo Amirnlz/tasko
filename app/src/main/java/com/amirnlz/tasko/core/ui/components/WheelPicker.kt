@@ -1,6 +1,5 @@
 package com.amirnlz.tasko.core.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,15 +16,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @Composable
@@ -39,28 +39,52 @@ fun <T> WheelPicker(
     animateInitialScroll: Boolean = true
 ) {
     val lazyListState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
+    val density = LocalDensity.current
+
+    if (items.isEmpty()) {
+        Box(modifier = modifier, contentAlignment = Alignment.Center) {
+            Text("No items available")
+        }
+        return
+    }
+
+    val safeInitialIndex = initialIndex.coerceIn(0, items.lastIndex)
 
     // Animate or jump to initialIndex on first composition
-    LaunchedEffect(items, initialIndex) {
+    // Update the LaunchedEffect in WheelPicker
+    LaunchedEffect(items, safeInitialIndex) {
+        // Wait for layout measurement
+        while (lazyListState.layoutInfo.viewportSize.height == 0) {
+            delay(16)
+        }
+
+        val itemHeightPx = with(density) { itemHeight.dp.roundToPx() }
+        val centerOffset = (lazyListState.layoutInfo.viewportSize.height / 2) - (itemHeightPx / 2)
+
         if (animateInitialScroll) {
-            lazyListState.animateScrollToItem(initialIndex)
+            lazyListState.animateScrollToItem(
+                index = safeInitialIndex,
+                scrollOffset = -centerOffset
+            )
         } else {
-            lazyListState.scrollToItem(initialIndex)
+            lazyListState.scrollToItem(
+                index = safeInitialIndex,
+                scrollOffset = -centerOffset
+            )
         }
     }
 
-    // We must remember the derivedStateOf to avoid "creating state object without remember"
+
+    // Update the centerItemIndex calculation
     val centerItemIndex by remember {
         derivedStateOf {
-            val layoutInfo = lazyListState.layoutInfo
-            val viewportCenter =
-                layoutInfo.viewportStartOffset + (layoutInfo.viewportSize.height / 2)
-            val closestItem = layoutInfo.visibleItemsInfo.minByOrNull { info ->
-                val itemCenter = info.offset + (info.size / 2)
-                kotlin.math.abs(itemCenter - viewportCenter)
-            }
-            closestItem?.index ?: 0
+            val viewportCenter = lazyListState.layoutInfo.viewportStartOffset +
+                    (lazyListState.layoutInfo.viewportSize.height / 2)
+
+            lazyListState.layoutInfo.visibleItemsInfo
+                .minByOrNull { item ->
+                    abs(item.offset + (item.size / 2) - viewportCenter)
+                }?.index ?: initialIndex.coerceIn(0, items.lastIndex)
         }
     }
 
@@ -120,12 +144,7 @@ fun <T> WheelPicker(
                         .height(itemHeight.dp)
                         .fillMaxWidth()
                         .scale(scaleFactor)
-                        .alpha(alphaFactor)
-                        .clickable {
-                            scope.launch {
-                                lazyListState.animateScrollToItem(index)
-                            }
-                        },
+                        .alpha(alphaFactor),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
