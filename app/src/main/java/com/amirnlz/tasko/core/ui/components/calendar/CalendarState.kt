@@ -10,8 +10,3 @@ data class CalendarState(
     val currentDate: LocalDate = LocalDate.now(),
     val displayedYearMonth: YearMonth = YearMonth.now()
 )
-
-sealed interface CalendarEvent {
-    data class DateSelected(val date: LocalDate) : CalendarEvent
-    data class MonthChanged(val yearMonth: YearMonth) : CalendarEvent
-}

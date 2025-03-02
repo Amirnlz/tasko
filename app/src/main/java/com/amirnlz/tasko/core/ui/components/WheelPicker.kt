@@ -38,9 +38,11 @@ fun <T> WheelPicker(
     itemHeight: Int = 40,
     animateInitialScroll: Boolean = true
 ) {
+    // State management for the scroll position
     val lazyListState = rememberLazyListState()
     val density = LocalDensity.current
 
+    // Handle empty state case first
     if (items.isEmpty()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             Text("No items available")
@@ -48,23 +50,27 @@ fun <T> WheelPicker(
         return
     }
 
+    // Ensure initial index stays within valid bounds
     val safeInitialIndex = initialIndex.coerceIn(0, items.lastIndex)
 
-    // Animate or jump to initialIndex on first composition
-    // Update the LaunchedEffect in WheelPicker
+    // Initial scroll positioning logic
     LaunchedEffect(items, safeInitialIndex) {
-        // Wait for layout measurement
+        // Wait for layout measurement to complete
+        // Essential for accurate scroll calculations
         while (lazyListState.layoutInfo.viewportSize.height == 0) {
-            delay(16)
+            delay(16) // Wait for 1 frame (60fps = ~16ms/frame)
         }
 
+        // Calculate pixel dimensions
         val itemHeightPx = with(density) { itemHeight.dp.roundToPx() }
+        // Determine center offset to properly align items
         val centerOffset = (lazyListState.layoutInfo.viewportSize.height / 2) - (itemHeightPx / 2)
 
+        // Scroll to initial position with animation option
         if (animateInitialScroll) {
             lazyListState.animateScrollToItem(
                 index = safeInitialIndex,
-                scrollOffset = -centerOffset
+                scrollOffset = -centerOffset // Negative offset centers the item
             )
         } else {
             lazyListState.scrollToItem(
@@ -74,29 +80,33 @@ fun <T> WheelPicker(
         }
     }
 
-
-    // Update the centerItemIndex calculation
+    // Track centered item using derived state for performance
     val centerItemIndex by remember {
         derivedStateOf {
+            // Calculate viewport center point
             val viewportCenter = lazyListState.layoutInfo.viewportStartOffset +
                     (lazyListState.layoutInfo.viewportSize.height / 2)
 
+            // Find closest item to center using layout information
             lazyListState.layoutInfo.visibleItemsInfo
                 .minByOrNull { item ->
+                    // Calculate distance from item center to viewport center
                     abs(item.offset + (item.size / 2) - viewportCenter)
-                }?.index ?: initialIndex.coerceIn(0, items.lastIndex)
+                }?.index ?: safeInitialIndex // Fallback to safe index
         }
     }
 
-    // Notify the caller whenever the center item changes
+    // Notify parent component about selection changes
     LaunchedEffect(centerItemIndex) {
         if (centerItemIndex in items.indices) {
             onSelected(centerItemIndex, items[centerItemIndex])
         }
     }
 
+    // Calculate wheel height based on visible items
     val totalVisibleItems = visibleCount.coerceAtLeast(1)
     val wheelHeightDp = (totalVisibleItems * itemHeight).dp
+
 
     Box(
         modifier = modifier
@@ -104,8 +114,6 @@ fun <T> WheelPicker(
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-
-        // The vertical lazy list
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = lazyListState,
@@ -118,19 +126,18 @@ fun <T> WheelPicker(
                 // Distance from center
                 val distanceFromCenter = (index - centerItemIndex).absoluteValue.toFloat()
 
-                // Scale + alpha for "wheel" effect
+                // Interpolate visual properties based on distance from center
                 val scaleFactor = lerp(
-                    start = 0.75f,
-                    stop = 1.0f,
+                    start = 0.75f,  // Minimum scale for edge items
+                    stop = 1.0f,      // Full scale for center item
                     fraction = (1f - distanceFromCenter / totalVisibleItems).coerceIn(0f, 1f)
                 )
                 val alphaFactor = lerp(
-                    start = 0.3f,
-                    stop = 1.0f,
+                    start = 0.3f,     // More transparent for edge items
+                    stop = 1.0f,      // Fully opaque for center item
                     fraction = (1f - distanceFromCenter / totalVisibleItems).coerceIn(0f, 1f)
                 )
-
-                // For the center item, apply bold + primary color. Otherwise normal style.
+                // Selection styling logic
                 val isSelected = (index == centerItemIndex)
                 val textColor = if (isSelected) {
                     MaterialTheme.colorScheme.primary

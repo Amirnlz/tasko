@@ -10,7 +10,7 @@ object CalendarConstants {
 
     fun getYearsRange(selectedYear: Int? = null): List<Int> {
         val currentYear = LocalDate.now().year
-        val minYear = selectedYear?.let { minOf(it, currentYear - 100) } ?: (currentYear - 100)
+        val minYear = selectedYear?.let { minOf(it, currentYear - 5) } ?: (currentYear - 5)
         val maxYear = selectedYear?.let { maxOf(it, currentYear + 10) } ?: (currentYear + 10)
         return (minYear..maxYear).toList()
     }
