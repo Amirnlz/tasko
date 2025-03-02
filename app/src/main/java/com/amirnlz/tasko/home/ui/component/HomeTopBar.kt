@@ -16,11 +16,11 @@ fun HomeTopBar(modifier: Modifier = Modifier) {
         modifier = modifier,
         title = { GreetingMessage() },
 
-    )
+        )
 }
 
 @Composable
-fun GreetingMessage(modifier: Modifier = Modifier) {
+fun GreetingMessage() {
     Text(
         greetMessageText(),
         style = MaterialTheme.typography.titleLarge,
