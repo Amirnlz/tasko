@@ -12,6 +12,7 @@ import java.time.LocalDate
 
 
 sealed interface TasksEvent {
+    data object GetAllTasks : TasksEvent
     data class GetTasksByDate(val date: LocalDate) : TasksEvent
     data class AddTask(val todoTask: TodoTask) : TasksEvent
 }
@@ -30,8 +31,25 @@ class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
 
     fun onEvent(event: TasksEvent) {
         when (event) {
+            is TasksEvent.GetAllTasks -> getAllTasks()
             is TasksEvent.GetTasksByDate -> getTasksByDate(event.date)
             is TasksEvent.AddTask -> addTask(event.todoTask)
+        }
+    }
+
+    private fun getAllTasks() {
+        viewModelScope.launch {
+            _uiState.value = TasksUiState.Loading
+            try {
+                repository.getAllTodoTasks().collect { data ->
+                    _uiState.value =
+                        TasksUiState.Success(data)
+
+                }
+            } catch (e: Exception) {
+                _uiState.value = TasksUiState.Error(e)
+
+            }
         }
     }
 
