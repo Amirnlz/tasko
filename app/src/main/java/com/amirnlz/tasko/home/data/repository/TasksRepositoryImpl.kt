@@ -6,6 +6,7 @@ import com.amirnlz.tasko.home.domain.repository.TasksRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -15,7 +16,9 @@ class TasksRepositoryImpl(private val tasksDao: TasksDao) : TasksRepository {
     }
 
     override suspend fun addTask(todoTask: TodoTask) {
-        return tasksDao.addTask(todoTask)
+        return withContext(Dispatchers.IO) {
+            tasksDao.addTask(todoTask)
+        }
     }
 
     override fun getTasksByDate(date: LocalDate): Flow<List<TodoTask>> {
