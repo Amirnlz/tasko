@@ -8,6 +8,7 @@ interface TasksRepository {
     fun getAllTodoTasks(): Flow<List<TodoTask>>
 
     suspend fun addTask(todoTask: TodoTask)
+    suspend fun updateTask(todoTask: TodoTask)
 
     fun getTasksByDate(date: LocalDate): Flow<List<TodoTask>>
 

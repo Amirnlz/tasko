@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.amirnlz.tasko.home.domain.model.TodoTask
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +15,9 @@ interface TasksDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addTask(todoTask: TodoTask)
+
+    @Update
+    fun updateTask(todoTask: TodoTask)
 
 
     @Query("SELECT * FROM tasks WHERE dueDateMillis = :millis")

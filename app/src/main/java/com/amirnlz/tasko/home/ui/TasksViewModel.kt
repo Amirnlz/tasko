@@ -15,6 +15,7 @@ sealed interface TasksEvent {
     data object GetAllTasks : TasksEvent
     data class GetTasksByDate(val date: LocalDate) : TasksEvent
     data class AddTask(val todoTask: TodoTask) : TasksEvent
+    data class UpdateTask(val todoTask: TodoTask) : TasksEvent
 }
 
 sealed interface TasksUiState {
@@ -34,6 +35,7 @@ class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
             is TasksEvent.GetAllTasks -> getAllTasks()
             is TasksEvent.GetTasksByDate -> getTasksByDate(event.date)
             is TasksEvent.AddTask -> addTask(event.todoTask)
+            is TasksEvent.UpdateTask -> updateTask(event.todoTask)
         }
     }
 
@@ -72,6 +74,12 @@ class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
     private fun addTask(todoTask: TodoTask) {
         viewModelScope.launch {
             repository.addTask(todoTask)
+        }
+    }
+
+    private fun updateTask(todoTask: TodoTask) {
+        viewModelScope.launch {
+            repository.updateTask(todoTask)
         }
     }
 }

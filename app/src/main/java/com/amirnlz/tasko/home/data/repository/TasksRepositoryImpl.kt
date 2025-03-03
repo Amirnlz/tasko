@@ -21,6 +21,12 @@ class TasksRepositoryImpl(private val tasksDao: TasksDao) : TasksRepository {
         }
     }
 
+    override suspend fun updateTask(todoTask: TodoTask) {
+        return withContext(Dispatchers.IO) {
+            tasksDao.updateTask(todoTask)
+        }
+    }
+
     override fun getTasksByDate(date: LocalDate): Flow<List<TodoTask>> {
         val millis = date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
         return tasksDao.getTasksByDate(millis).flowOn(Dispatchers.IO)
