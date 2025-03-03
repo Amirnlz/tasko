@@ -1,5 +1,6 @@
 package com.amirnlz.tasko.home.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.amirnlz.tasko.core.ui.components.tasks.TasksList
 import com.amirnlz.tasko.home.ui.component.HomeAddingTodoBottomSheet
 import com.amirnlz.tasko.home.ui.component.HomeCalendar
 import com.amirnlz.tasko.home.ui.component.HomeTopBar
@@ -62,7 +64,7 @@ fun HomeScreen(
             }
         }
     ) { paddingValues ->
-        Column(Modifier.padding(paddingValues)) {
+        Column(Modifier.padding(paddingValues), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (showBottomSheet)
                 HomeAddingTodoBottomSheet(
                     onDismissRequest = {
@@ -76,7 +78,10 @@ fun HomeScreen(
                 )
             HomeCalendar(viewModel = calendarViewModel)
             when (tasksUiState) {
-                is TasksUiState.Success -> Text((tasksUiState as TasksUiState.Success).tasks.size.toString())
+                is TasksUiState.Success -> TasksList(tasks = (tasksUiState as TasksUiState.Success).tasks) {
+                    taskViewModel.onEvent(TasksEvent.UpdateTask(it))
+                }
+
                 is TasksUiState.Error -> Text(tasksUiState.toString())
                 is TasksUiState.Loading -> CircularProgressIndicator()
             }
