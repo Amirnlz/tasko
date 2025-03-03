@@ -1,5 +1,9 @@
 package com.amirnlz.tasko.utils
 
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+
 
 fun Int.greetingMessageByHour(): String {
     return when (this) {
@@ -18,5 +22,13 @@ fun Int.greetingMessageByHour(): String {
         else -> {
             "Good Morning";
         }
+    }
+}
+
+fun Long?.toLocalDateFromMillis(): LocalDate? {
+    return this?.let { milliseconds ->
+        Instant.ofEpochMilli(milliseconds)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
     }
 }

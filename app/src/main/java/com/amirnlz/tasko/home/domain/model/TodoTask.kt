@@ -7,9 +7,8 @@ import androidx.room.PrimaryKey
 data class TodoTask(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
-    val dueDateMillis: Long,
+    val dueDateMillis: Long = System.currentTimeMillis(),
     val isCompleted: Boolean = false,
-    val createdAt: Long = System.currentTimeMillis(),
 )
 
 

@@ -43,7 +43,7 @@ fun HomeScreen(
     val tasksUiState by taskViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(calendarState.selectedDate) {
-        taskViewModel.onEvent(TasksEvent.GetTasksByDate(calendarState.selectedDate))
+        taskViewModel.onEvent(TasksEvent.GetAllTasks)
     }
 
     Scaffold(
