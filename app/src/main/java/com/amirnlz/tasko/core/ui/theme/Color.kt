@@ -1,4 +1,4 @@
-package com.amirnlz.tasko.ui.theme
+package com.amirnlz.tasko.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
