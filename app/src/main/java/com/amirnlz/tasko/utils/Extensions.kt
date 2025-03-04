@@ -3,6 +3,7 @@ package com.amirnlz.tasko.utils
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 
 
 fun Int.greetingMessageByHour(): String {
@@ -26,9 +27,14 @@ fun Int.greetingMessageByHour(): String {
 }
 
 fun Long?.toLocalDateFromMillis(): LocalDate? {
-    return this?.let { milliseconds ->
-        Instant.ofEpochMilli(milliseconds)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
+    return this?.let {
+        Instant.ofEpochMilli(it)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
     }
+}
+
+
+fun LocalDate.toEpochMilli() : Long{
+    return this.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 }
