@@ -23,9 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.amirnlz.tasko.core.ui.components.tasks.TasksList
 import com.amirnlz.tasko.home.ui.component.HomeAddingTodoBottomSheet
 import com.amirnlz.tasko.home.ui.component.HomeCalendar
+import com.amirnlz.tasko.home.ui.component.HomeTasksList
 import com.amirnlz.tasko.home.ui.component.HomeTopBar
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -34,17 +34,15 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    calendarViewModel: CalendarViewModel = koinViewModel(),
     taskViewModel: TasksViewModel = koinViewModel(),
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val calendarState by calendarViewModel.state.collectAsStateWithLifecycle()
     val tasksUiState by taskViewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(calendarState.selectedDate) {
+    LaunchedEffect(Unit) {
         taskViewModel.onEvent(TasksEvent.GetAllTasks)
     }
 
@@ -76,9 +74,10 @@ fun HomeScreen(
                     },
                     sheetState = sheetState,
                 )
-            HomeCalendar(viewModel = calendarViewModel)
+            HomeCalendar()
             when (tasksUiState) {
-                is TasksUiState.Success -> TasksList(tasks = (tasksUiState as TasksUiState.Success).tasks) {
+                is TasksUiState.Success -> HomeTasksList(tasks = (tasksUiState as TasksUiState.Success).tasks)
+                {
                     taskViewModel.onEvent(TasksEvent.UpdateTask(it))
                 }
 

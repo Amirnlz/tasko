@@ -10,7 +10,3 @@ data class TodoTask(
     val dueDateMillis: Long = System.currentTimeMillis(),
     val isCompleted: Boolean = false,
 )
-
-
-
-

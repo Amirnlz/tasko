@@ -9,10 +9,11 @@ import com.amirnlz.tasko.core.ui.components.calendar.MonthDaysPicker
 import com.amirnlz.tasko.home.ui.CalendarEvent
 import com.amirnlz.tasko.home.ui.CalendarViewModel
 import com.kizitonwose.calendar.core.yearMonth
+import org.koin.androidx.compose.koinViewModel
 import java.time.YearMonth
 
 @Composable
-fun HomeCalendar(modifier: Modifier = Modifier, viewModel: CalendarViewModel) {
+fun HomeCalendar(modifier: Modifier = Modifier, viewModel: CalendarViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Column(
