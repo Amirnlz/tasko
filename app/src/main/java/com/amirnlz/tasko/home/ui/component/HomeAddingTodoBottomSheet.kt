@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.amirnlz.tasko.home.domain.model.TodoTask
 import com.amirnlz.tasko.home.ui.TasksEvent
 import com.amirnlz.tasko.home.ui.TasksViewModel
+import com.amirnlz.tasko.utils.toEpochMilli
 import com.amirnlz.tasko.utils.toLocalDateFromMillis
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -114,8 +115,7 @@ fun HomeAddingTodoBottomSheet(
 
             Button(
                 onClick = {
-                    val currentTimestamp = System.currentTimeMillis()
-                    val task = TodoTask(title = title, dueDateMillis = currentTimestamp)
+                    val task = TodoTask(title = title, dueDateMillis = date.toEpochMilli())
                     tasksViewModel.onEvent(TasksEvent.AddTask(task))
                     scope.launch {
                         sheetState.hide()
